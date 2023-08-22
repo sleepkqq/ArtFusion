@@ -4,6 +4,7 @@ from flask_login import login_user
 from flask import render_template, request, redirect, url_for
 
 
+#asdasda
 @app.route('/')
 def index():
     return render_template("index.html")
