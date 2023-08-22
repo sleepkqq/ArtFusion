@@ -1,5 +1,5 @@
 from app import app, db
-from app.models import User, News
+from app.models import User, News, Contact
 from flask_login import login_user
 from flask import render_template, request, redirect, url_for
 
@@ -53,9 +53,25 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
+
 @app.route('/action')
 def action():
     return render_template('action.html')
+
+
 @app.route('/contactus')
 def contactus():
+    return render_template('contactus.html')
+
+
+@app.route('/contactus', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        message = request.form.get('message')
+        new_contact_us = Contact(username=username, email=email, message=message)
+        db.session.add(new_contact_us)
+        db.session.commit()
+        return redirect(url_for('contactus'))
     return render_template('contactus.html')

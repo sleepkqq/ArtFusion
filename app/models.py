@@ -38,3 +38,15 @@ class News(db.Model):
     def __init__(self, username, text):
         self.username = username
         self.text = text
+
+
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(128), unique=True, nullable=False)
+    message = db.Column(db.String(256), nullable=False)
+
+    def __init__(self, username, email, message):
+        self.username = username
+        self.email = email
+        self.message = message
