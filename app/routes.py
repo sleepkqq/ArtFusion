@@ -51,3 +51,10 @@ def register():
         login_user(new_user)
         return redirect(url_for('login'))
     return render_template('register.html')
+
+@app.route('/action')
+def action():
+    return render_template('action.html')
+@app.route('/contactus')
+def contactus():
+    return render_template('contactus.html')
