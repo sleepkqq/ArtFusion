@@ -9,8 +9,7 @@
         <h1 align="center">News</h1>
         <form method="post" action="/news">
             <div class="mb-3">
-                <label for="text" class="form-label">Write something...</label>
-                <input type="text" class="form-control" id="text" name="text" required>
+                <input type="text" class="form-control" placeholder="Write something..." id="text" name="text" required>
             </div>
             <ul class="news-group">
                     {% for text in news %}
