@@ -28,3 +28,14 @@ class User(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class News(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(128), unique=True, nullable=False)
+
+    def __init__(self, text):
+        self.text = text
+
+    def get_text(self):
+        return self.text

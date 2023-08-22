@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    News
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 align="center">News</h1>
+        <form method="post" action="/news">
+            <div class="mb-3">
+                <label for="text" class="form-label">Write something...</label>
+                <input type="text" class="form-control" id="text" name="text" required>
+            </div>
+            <ul class="news-group">
+                    {% for text in news %}
+                        <li class="list-group-item"><b>{{ text.id }}</b> - {{ text.text }}</li>
+                    {% endfor %}
+                </ul>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
+{% endblock %}

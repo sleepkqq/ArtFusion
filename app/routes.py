@@ -1,5 +1,5 @@
 from app import app, db
-from app.models import User
+from app.models import User, News
 from flask_login import login_user
 from flask import render_template, request, redirect, url_for
 
@@ -13,6 +13,18 @@ def index():
 def users():
     users_list = User.query.all()
     return render_template('users.html', users=users_list)
+
+
+@app.route('/news', methods=['GET', 'POST'])
+def news():
+    if request.method == 'POST':
+        text = request.form.get('text')
+        new_text = News(text=text)
+        db.session.add(new_text)
+        db.session.commit()
+        return redirect(url_for('news'))
+    news_list = News.query.all()
+    return render_template("news.html", news=news_list)
 
 
 @app.route('/login', methods=['GET', 'POST'])
