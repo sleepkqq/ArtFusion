@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt()
 
 
+#asdasda
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
