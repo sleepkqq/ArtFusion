@@ -18,8 +18,9 @@ def users():
 @app.route('/news', methods=['GET', 'POST'])
 def news():
     if request.method == 'POST':
+        username = request.form.get('username')
         text = request.form.get('text')
-        new_text = News(text=text)
+        new_text = News(username=username, text=text)
         db.session.add(new_text)
         db.session.commit()
         return redirect(url_for('news'))
