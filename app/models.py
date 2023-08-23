@@ -53,5 +53,3 @@ class Contact(db.Model):
         self.username = username
         self.email = email
         self.message = message
-
-
