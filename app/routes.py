@@ -1,7 +1,7 @@
 from app import app, db
 from app.models import User, News, Contact
 from flask_login import login_user
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, session
 
 
 @app.route('/')
@@ -18,9 +18,9 @@ def users():
 @app.route('/news', methods=['GET', 'POST'])
 def news():
     if request.method == 'POST':
-        username = request.form.get('username')
+        session['username'] = request.form['username']
         text = request.form.get('text')
-        new_text = News(username=username, text=text)
+        new_text = News(username=session['username'], text=text)
         db.session.add(new_text)
         db.session.commit()
         return redirect(url_for('news'))
@@ -31,10 +31,10 @@ def news():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
+        session['username'] = request.form['username']
+        session['password'] = request.form['password']
+        user = User.query.filter_by(username=session['username']).first()
+        if user and user.check_password(session['password']):
             login_user(user)
             return redirect(url_for('index'))
     return render_template('login.html')
@@ -43,14 +43,14 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        new_user = User(username=username)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
-        login_user(new_user)
-        return redirect(url_for('login'))
+            session['username'] = request.form['username']
+            session['password'] = request.form['password']
+            new_user = User(username=session['username'])
+            new_user.set_password(session['password'])
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
+            return redirect(url_for('login'))
     return render_template('register.html')
 
 
