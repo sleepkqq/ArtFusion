@@ -1,7 +1,8 @@
 from app import app, db
 from app.models import User, News, Contact
-from flask_login import login_user
+from flask_login import login_user, login_required
 from flask import render_template, request, redirect, url_for, session
+
 
 
 @app.route('/')
@@ -10,12 +11,14 @@ def index():
 
 
 @app.route('/users', methods=['GET'])
+@login_required
 def users():
     users_list = User.query.all()
     return render_template('users.html', users=users_list)
 
 
 @app.route('/news', methods=['GET', 'POST'])
+@login_required
 def news():
     if request.method == 'POST':
         session['username'] = request.form['username']
@@ -43,28 +46,25 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-            session['username'] = request.form['username']
-            session['password'] = request.form['password']
-            new_user = User(username=session['username'])
-            new_user.set_password(session['password'])
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user)
-            return redirect(url_for('login'))
+        session['username'] = request.form['username']
+        session['password'] = request.form['password']
+        new_user = User(username=session['username'])
+        new_user.set_password(session['password'], active=True)
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+        return redirect(url_for('login'))
     return render_template('register.html')
 
 
 @app.route('/action')
+@login_required
 def action():
     return render_template('action.html')
 
 
-@app.route('/contactus')
-def contactus():
-    return render_template('contactus.html')
-
-
-@app.route('/contactus', methods=['GET', 'POST'])
+@app.route('/contact', methods=['GET', 'POST'])
+@login_required
 def contact():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -73,7 +73,7 @@ def contact():
         new_contact_us = Contact(username=username, email=email, message=message)
         db.session.add(new_contact_us)
         db.session.commit()
-        return redirect(url_for('contactus'))
+        return redirect(url_for('contact'))
     return render_template('contactus.html')
 
 
