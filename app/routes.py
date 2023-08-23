@@ -63,12 +63,6 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/action')
-@login_required
-def action():
-    return render_template('action.html')
-
-
 @app.route('/contact', methods=['GET', 'POST'])
 @login_required
 def contact():
@@ -79,7 +73,7 @@ def contact():
         db.session.add(new_contact_us)
         db.session.commit()
         return redirect(url_for('contact'))
-    return render_template('contactus.html')
+    return render_template('contact.html')
 
 
 @app.route('/addart')
