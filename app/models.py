@@ -13,6 +13,7 @@ class User(db.Model):
     active = db.Column(db.Boolean, default=True)
 
     contacts = db.relationship('Contact', backref='user', lazy=True)
+    news = db.relationship('News', backref='user', lazy=True)
 
     def __init__(self, username, active):
         self.username = username

@@ -20,7 +20,6 @@ def users():
 @login_required
 def news():
     if request.method == 'POST':
-        session['username'] = request.form['username']
         text = request.form.get('text')
         new_text = News(username=session['username'], text=text)
         db.session.add(new_text)
