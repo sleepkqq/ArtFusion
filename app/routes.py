@@ -75,3 +75,10 @@ def contact():
         db.session.commit()
         return redirect(url_for('contactus'))
     return render_template('contactus.html')
+
+
+@app.route('/addart')
+def addart():
+    return render_template('addart.html')
+
+
