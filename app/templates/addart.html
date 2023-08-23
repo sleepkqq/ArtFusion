@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Add Art
+{% endblock %}
+
+{% block body %}
+    <form enctype="multipart/form-data" method="post" action="/addart">
+        <p><input type="file" name="f"></p>
+        <input type="submit" value="Add Art">
+    </form>
+{% endblock %}
