@@ -1,5 +1,3 @@
-from django.db import models
-
 from app import db
 from app.auth import login_manager
 from flask_bcrypt import Bcrypt
@@ -43,7 +41,7 @@ def load_user(user_id):
 
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), nullable=False)
+    username = db.Column(db.String(80), db.ForeignKey('user.username'), nullable=False)
     text = db.Column(db.String(128), nullable=False)
 
     def __init__(self, username, text):

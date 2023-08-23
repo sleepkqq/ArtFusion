@@ -4,10 +4,9 @@ from flask_login import login_user, login_required
 from flask import render_template, request, redirect, url_for, session
 
 
-
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template('index.html')
 
 
 @app.route('/users', methods=['GET'])
@@ -78,7 +77,6 @@ def contact():
 
 
 @app.route('/addart')
+@login_required
 def addart():
     return render_template('addart.html')
-
-
