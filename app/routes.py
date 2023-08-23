@@ -10,11 +10,18 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/users', methods=['GET'])
+@app.route('/user/all', methods=['GET'])
 @login_required
 def users():
     users_list = User.query.all()
     return render_template('users.html', users=users_list)
+
+
+@login_required
+@app.route('/user/<int:id>', methods=['GET'])
+def get_user(id):
+    user = User.query.filter_by(id=id).first()
+    return render_template('user.html', user=user)
 
 
 @app.route('/news', methods=['GET', 'POST'])
