@@ -1,30 +1,35 @@
 from app import app, db
 from app.models import User, News, Contact
-from flask_login import login_user
+from flask_login import login_user, login_required, logout_user, current_user
 from flask import render_template, request, redirect, url_for
+
 
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template('index.html')
 
 
-@app.route('/')
-def existu():
-    return render_template("existu.html")
-
-
-@app.route('/users', methods=['GET'])
+@app.route('/user/all', methods=['GET'])
+@login_required
 def users():
     users_list = User.query.all()
     return render_template('users.html', users=users_list)
 
 
+@login_required
+@app.route('/user/<int:id>', methods=['GET'])
+def get_user(id):
+    user = User.query.filter_by(id=id).first()
+    return render_template('user.html', user=user)
+
+
 @app.route('/news', methods=['GET', 'POST'])
+@login_required
 def news():
     if request.method == 'POST':
         text = request.form.get('text')
-        new_text = News(text=text)
+        new_text = News(current_user.username, text=text)
         db.session.add(new_text)
         db.session.commit()
         return redirect(url_for('news'))
@@ -35,8 +40,8 @@ def news():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.form['username']
+        password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
@@ -49,9 +54,9 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        new_user = User(username=username)
+        username = request.form['username']
+        password = request.form['password']
+        new_user = User(username=username, active=True)
         new_user.set_password(password)
         user = User.query.filter_by(username=username).first()
         if user:
@@ -63,36 +68,27 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/action')
-def action():
-    return render_template('action.html')
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
-@app.route('/contactus')
-def contactus():
-    return render_template('contactus.html')
-
-
-@app.route('/baduorp')
-def baduorp():
-    return render_template("baduorp.html")
-
-
-@app.route('/contactus', methods=['GET', 'POST'])
+@app.route('/contact', methods=['GET', 'POST'])
+@login_required
 def contact():
     if request.method == 'POST':
-        username = request.form.get('username')
         email = request.form.get('email')
         message = request.form.get('message')
-        new_contact_us = Contact(username=username, email=email, message=message)
+        new_contact_us = Contact(username=current_user.username, email=email, message=message)
         db.session.add(new_contact_us)
         db.session.commit()
-        return redirect(url_for('contactus'))
-    return render_template('contactus.html')
+        return redirect(url_for('contact'))
+    return render_template('contact.html')
 
 
 @app.route('/addart')
+@login_required
 def addart():
     return render_template('addart.html')
-
-

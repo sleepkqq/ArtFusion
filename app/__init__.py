@@ -8,3 +8,6 @@ db = SQLAlchemy(app)
 login_manager.init_app(app)
 
 from app import routes
+
+with app.app_context():
+    db.create_all()
