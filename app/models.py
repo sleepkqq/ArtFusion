@@ -1,5 +1,3 @@
-from django.db import models
-
 from app import db
 from app.auth import login_manager
 from flask_bcrypt import Bcrypt

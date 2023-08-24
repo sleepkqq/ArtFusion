@@ -9,6 +9,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route('/')
+def existu():
+    return render_template("existu.html")
+
+
 @app.route('/users', methods=['GET'])
 def users():
     users_list = User.query.all()
@@ -36,6 +41,8 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('index'))
+        else:
+            return render_template('login.html', error="НЕПРАВИЛЬНОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ ИЛИ ПАРОЛЬ!")
     return render_template('login.html')
 
 
@@ -46,6 +53,9 @@ def register():
         password = request.form.get('password')
         new_user = User(username=username)
         new_user.set_password(password)
+        user = User.query.filter_by(username=username).first()
+        if user:
+            return render_template('register.html', error="ТАКОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ УЖЕ СУЩЕСТВУЕТ!")
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -61,6 +71,11 @@ def action():
 @app.route('/contactus')
 def contactus():
     return render_template('contactus.html')
+
+
+@app.route('/baduorp')
+def baduorp():
+    return render_template("baduorp.html")
 
 
 @app.route('/contactus', methods=['GET', 'POST'])
