@@ -8,11 +8,15 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-3">
-                <h1>Users</h1>
+                <h1 class="text-center mb-4">Users</h1>
                 <ul class="list-group">
                     {% for user in users %}
-                        <li class="list-group-item list-group-item-action">
-                            <b>{{ user.id }}</b> - <a class="nav-link" href="/user/{{ user.id }}"> {{ user.username }}</a>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary rounded-pill ml-2">{{ user.id }}</span>
+                                <span class="fw-bold">{{ user.username }}</span>
+                            </div>
+                            <a href="/user/{{ user.id }}" class="btn btn-sm btn-outline-primary">View Profile</a>
                         </li>
                     {% endfor %}
                 </ul>
