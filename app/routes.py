@@ -3,6 +3,7 @@ from app import app, db
 from app.models import User, News, Contact
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import render_template, request, redirect, url_for, send_file
+from PIL import Image
 
 
 
@@ -31,13 +32,23 @@ def news():
     if request.method == 'POST':
         text = request.form.get('text')
         image = request.files['image'].read() if 'image' in request.files else None
-        new_text = News(current_user.username, text=text, image=image)
+        resized_image_data = resize_and_save_image(image)
+        new_text = News(current_user.username, text=text, image=resized_image_data)
         db.session.add(new_text)
         db.session.commit()
         return redirect(url_for('news'))
 
     news_list = News.query.all()
     return render_template("news.html", news=news_list)
+
+
+def resize_and_save_image(image_data, max_width=500, max_height=200):
+    img = Image.open(BytesIO(image_data))
+    img.thumbnail((max_width, max_height))
+    output = BytesIO()
+    img.save(output, format='JPEG')
+    output.seek(0)
+    return output.read()
 
 
 @app.route('/image/<int:post_id>')
