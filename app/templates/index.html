@@ -5,16 +5,22 @@
 {% endblock %}
 
 {% block body %}
-    <div class="jumbotron text-center">
-    {% if current_user.is_authenticated %}
-        <h1>Hello, {{ current_user.username }}!</h1>
-        <p>Welcome to Art Fusion.</p>
-        <a href="/logout">Logout</a>
-    {% else %}
-        <h1>Hello!</h1>
-        <p>Welcome to Art Fusion.</p>
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
-    {% endif %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="jumbotron text-center">
+                    {% if current_user.is_authenticated %}
+                        <h1>Hello, {{ current_user.username }}!</h1>
+                        <p>Welcome to Art Fusion.</p>
+                        <a href="/logout" class="btn btn-danger">Logout</a>
+                    {% else %}
+                        <h1>Hello!</h1>
+                        <p>Welcome to Art Fusion.</p>
+                        <a href="/login" class="btn btn-primary">Login</a>
+                        <a href="/register" class="btn btn-secondary">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
