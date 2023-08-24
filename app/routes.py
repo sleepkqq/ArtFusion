@@ -88,7 +88,7 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            return render_template('login.html', error="НЕПРАВИЛЬНОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ ИЛИ ПАРОЛЬ!")
+            return render_template('login.html', error="Invalid username or password!")
     return render_template('login.html')
 
 
@@ -101,8 +101,11 @@ def register():
         new_user = User(username=username, email=email, active=True)
         new_user.set_password(password)
         user = User.query.filter_by(username=username).first()
+        mail = User.query.filter_by(email=email).first()
         if user:
-            return render_template('register.html', error="ТАКОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ УЖЕ СУЩЕСТВУЕТ!")
+            return render_template('register.html', error="This name is already in use. Please choose another.")
+        if mail:
+            return render_template('register.html', error="This email is already in use. Please choose another.")
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
