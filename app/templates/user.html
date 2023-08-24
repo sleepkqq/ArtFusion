@@ -1,9 +1,64 @@
 {% extends 'base.html' %}
 
+{% block head %}
+    <script type="text/javascript">
+        function addimage() {
+          var img = document.createElement("img");
+          img.src = "{{ url_for('get_image', post_id=post.id) }}";
+          img.height = 50;
+          img.width = 100;
+
+          var class_name = "foo";
+          img.setAttribute("class", class_name);
+
+          document.body.appendChild(img);
+        }
+</script>
+{% endblock %}
+
 {% block title %}
     {{ user.username }}
 {% endblock %}
 
 {% block body %}
     <h1 class = "text-center">It's {{ user.username }}'s profile!</h1>
+    <h2 class = "text-center">Select your avatar</h2>
+    <div class="avatar">
+        <div class="avatar-container avatar-size">
+            <div class="edit-container">
+                <div class = "text-center">
+                    <form method="post" action="/news" enctype="multipart/form-data">
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <button type="submit" class="btn btn-primary">Select</button>
+                    </form>
+                    {% for post in news %}
+                        <li class="list-group-item">
+                            {% if post.image %}
+                                <img src="{{ url_for('get_image', post_id=post.id) }}" alt="News Image" class="img-fluid" style="max-height: 200px;">
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    <h2 class = "text-center">Select your status</h2>
+    <form action="/contact" method="post">
+        <div class="mb-3">
+            <label for="message" class="form-label">Status</label>
+            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Select</button>
+        </div>
+    </form>
+    <h2 class = "text-center">Your News:</h2>
+    <ul class="list-group mt-3">
+            {% for post in news %}
+                <li class="list-group-item">
+                    <b>{{ post.username }}</b> - {{ post.text }}
+                    {% if post.image %}
+                        <img src="{{ url_for('get_image', post_id=post.id) }}" alt="News Image" class="img-fluid" style="max-height: 200px;">
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
 {% endblock %}
