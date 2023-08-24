@@ -46,6 +46,8 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('index'))
+        else:
+            return render_template('login.html', error="НЕПРАВИЛЬНОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ ИЛИ ПАРОЛЬ!")
     return render_template('login.html')
 
 
@@ -56,6 +58,9 @@ def register():
         password = request.form['password']
         new_user = User(username=username, active=True)
         new_user.set_password(password)
+        user = User.query.filter_by(username=username).first()
+        if user:
+            return render_template('register.html', error="ТАКОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ УЖЕ СУЩЕСТВУЕТ!")
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
