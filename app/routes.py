@@ -1,7 +1,8 @@
+from io import BytesIO
 from app import app, db
 from app.models import User, News, Contact
 from flask_login import login_user, login_required, logout_user, current_user
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, send_file
 
 
 
@@ -29,12 +30,22 @@ def get_user(id):
 def news():
     if request.method == 'POST':
         text = request.form.get('text')
-        new_text = News(current_user.username, text=text)
+        image = request.files['image'].read() if 'image' in request.files else None
+        new_text = News(current_user.username, text=text, image=image)
         db.session.add(new_text)
         db.session.commit()
         return redirect(url_for('news'))
+
     news_list = News.query.all()
     return render_template("news.html", news=news_list)
+
+
+@app.route('/image/<int:post_id>')
+@login_required
+def get_image(post_id):
+    news_item = News.query.get(post_id)
+    if news_item and news_item.image:
+        return send_file(BytesIO(news_item.image), mimetype='image/jpeg')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -86,9 +97,3 @@ def contact():
         db.session.commit()
         return redirect(url_for('contact'))
     return render_template('contact.html')
-
-
-@app.route('/addart')
-@login_required
-def addart():
-    return render_template('addart.html')
