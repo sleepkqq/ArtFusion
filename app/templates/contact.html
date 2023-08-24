@@ -5,15 +5,18 @@
 {% endblock %}
 
 {% block body %}
-    <form method="post" action="/contact">
+    <div class="container mt-5">
+        <h1>Contact Us</h1>
+        <form action="/contact" method="post">
             <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
+                <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="mb-3">
-                <label for="message" class="form-label">Message:</label>
-                <input type="text" class="form-control" id="message" name="message" required>
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Send Message</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+    </div>
 {% endblock %}

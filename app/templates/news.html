@@ -7,16 +7,25 @@
 {% block body %}
     <div class="container mt-5">
         <h1 class="text-center">News</h1>
-        <form method="post" action="/news">
+        <form method="post" action="/news" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="text" class="form-label"></label>
+                <label for="text" class="form-label">Text</label>
                 <input type="text" class="form-control" placeholder="Write something..." id="text" name="text" required>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Choose an image to upload:</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*">
             </div>
             <button type="submit" class="btn btn-primary">Send</button>
         </form>
         <ul class="list-group mt-3">
-            {% for text in news %}
-                <li class="list-group-item"><b>{{ text.username }}</b> - {{ text.text }}</li>
+            {% for post in news %}
+                <li class="list-group-item">
+                    <b>{{ post.username }}</b> - {{ post.text }}
+                    {% if post.image %}
+                        <img src="{{ url_for('get_image', post_id=post.id) }}" alt="News Image" class="img-fluid" style="max-height: 200px;">
+                    {% endif %}
+                </li>
             {% endfor %}
         </ul>
     </div>
