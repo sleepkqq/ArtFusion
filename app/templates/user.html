@@ -5,5 +5,55 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class = "text-center">It's {{ user.username }}'s profile!</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card mt-5">
+                    <div class="card-body text-center">
+                        <h1 class="card-title">{{ user.username }}</h1>
+                        <p class="card-text">
+                            {% if user.status %}
+                                {{ user.status }}
+                            {% else %}
+                                No status available.
+                            {% endif %}
+                        </p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><b>Email:</b> {{ user.email }}</li>
+                    </ul>
+                </div>
+
+                {% if user.username == current_user.username %}
+                    <form method="post" action="/status/{{ user.id }}" class="my-4 p-4 border rounded">
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Update Your Status:</label>
+                            <input type="text" class="form-control" id="status" name="status" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                        </div>
+                    </form>
+                {% endif %}
+
+                <div class="row mt-4">
+                    {% for post in news %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card">
+                                <img src="{{ url_for('get_image', post_id=post.id) }}" alt="News Image" class="card-img-top">
+                                <div class="card-body">
+                                    <p class="card-text">{{ post.text }}</p>
+                                    {% if current_user.username == post.username %}
+                                        <form method="post" action="/delete/{{ post.id }}">
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

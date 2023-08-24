@@ -6,27 +6,41 @@
 
 {% block body %}
     <div class="container mt-5">
-        <h1 class="text-center">News</h1>
-        <form method="post" action="/news" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="text" class="form-label">Text</label>
-                <input type="text" class="form-control" placeholder="Write something..." id="text" name="text" required>
+        <div class="container">
+            <h1 class="text-center">News</h1>
+            <form method="post" action="/news" enctype="multipart/form-data" class="my-4 p-4 border rounded">
+                <div class="mb-3">
+                    <label for="text" class="form-label">Text</label>
+                    <input type="text" class="form-control" placeholder="Write something..." id="text" name="text" required>
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Choose an image to upload:</label>
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </form>
+        </div>
+        <div class="container">
+            <div class="row">
+                {% for post in news %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card">
+                            <img src="{{ url_for('get_image', post_id=post.id) }}" alt="News Image" class="card-img-top">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ post.username }}</h5>
+                                <p class="card-text">{{ post.text }}</p>
+                                {% if current_user.username == post.username %}
+                                    <form method="post" action="/delete/{{ post.id }}">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
-            <div class="mb-3">
-                <label for="image" class="form-label">Choose an image to upload:</label>
-                <input type="file" class="form-control" id="image" name="image" accept="image/*">
-            </div>
-            <button type="submit" class="btn btn-primary">Send</button>
-        </form>
-        <ul class="list-group mt-3">
-            {% for post in news %}
-                <li class="list-group-item">
-                    <b>{{ post.username }}</b> - {{ post.text }}
-                    {% if post.image %}
-                        <img src="{{ url_for('get_image', post_id=post.id) }}" alt="News Image" class="img-fluid" style="max-height: 200px;">
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+        </div>
     </div>
 {% endblock %}
