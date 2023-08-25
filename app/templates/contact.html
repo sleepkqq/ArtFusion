@@ -17,6 +17,11 @@
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
+                    {% if error %}
+                        <div class="alert alert-success mt-3">
+                            {{ error }}
+                        </div>
+                    {% endif %}
                 </form>
             </div>
         </div>

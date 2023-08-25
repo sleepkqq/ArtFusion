@@ -102,7 +102,7 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            return render_template('login.html', error="НЕПРАВИЛЬНОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ ИЛИ ПАРОЛЬ!")
+            return render_template('login.html', error="Username or the password is incorrect!")
     return render_template('login.html')
 
 
@@ -116,7 +116,7 @@ def register():
         new_user.set_password(password)
         user = User.query.filter_by(username=username).first()
         if user:
-            return render_template('register.html', error="ТАКОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ УЖЕ СУЩЕСТВУЕТ!")
+            return render_template('register.html', error="This username is already taken!")
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -136,7 +136,10 @@ def logout():
 def contact():
     if request.method == 'POST':
         message = request.form.get('message')
+        con = Contact.query.filter_by(message=message).first()
         new_contact_us = Contact(username=current_user.username, email=current_user.email, message=message)
+        if not con:
+            return render_template('contact.html', error="Thank You!")
         db.session.add(new_contact_us)
         db.session.commit()
         return redirect(url_for('contact'))
