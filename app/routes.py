@@ -78,6 +78,16 @@ def delete_post(post_id):
     return redirect(url_for('news'))
 
 
+@app.route('/edit/<int:post_id>', methods=['POST'])
+def edit_post(post_id):
+    post = News.query.get(post_id)
+    if post and post.username == current_user.username:
+        new_text = request.form.get('edit_text')
+        post.text = new_text
+        db.session.commit()
+        return redirect(url_for("user_profile", id=current_user.id))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
