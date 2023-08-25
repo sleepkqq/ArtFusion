@@ -50,6 +50,14 @@ class News(db.Model):
         self.image = image
 
 
+class Avatar(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    image = db.Column(db.LargeBinary, nullable=False)
+
+    def __init__(self, image):
+        self.image = image
+
+
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), db.ForeignKey('user.username'), nullable=False)
@@ -61,3 +69,10 @@ class Contact(db.Model):
         self.email = email
         self.message = message
 
+
+class Status(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    stat = db.Column(db.String(256), nullable=False)
+
+    def __init__(self, stat):
+        self.stat = stat

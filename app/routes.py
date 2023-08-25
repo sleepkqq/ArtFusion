@@ -1,6 +1,6 @@
 from io import BytesIO
 from app import app, db
-from app.models import User, News, Contact
+from app.models import User, News, Contact, Avatar, Status
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import render_template, request, redirect, url_for, send_file
 from PIL import Image
@@ -59,6 +59,20 @@ def resize_and_save_image(image_data, max_width=500, max_height=200):
     img.save(output, format='JPEG')
     output.seek(0)
     return output.read()
+
+
+@app.route('/avatar', methods=['GET', 'POST'])
+@login_required
+def avatar():
+    if request.method == 'POST':
+        image = request.files['image'].read() if 'image' in request.files else None
+        new_avatar = Avatar(current_user.username, image=image)
+        db.session.add(new_avatar)
+        db.session.commit()
+        return redirect(url_for('user'))
+
+    ava = Avatar(current_user.username, image=image)
+    return render_template("user.html", avatar=ava)
 
 
 @app.route('/image/<int:post_id>')
@@ -135,8 +149,23 @@ def logout():
 def contact():
     if request.method == 'POST':
         message = request.form.get('message')
+        con = Contact.query.filter_by(message=message).first()
         new_contact_us = Contact(username=current_user.username, email=current_user.email, message=message)
+        if not con:
+            return render_template('contact.html', error="Thank You!")
         db.session.add(new_contact_us)
         db.session.commit()
         return redirect(url_for('contact'))
     return render_template('contact.html')
+
+
+@app.route('/user', methods=['GET', 'POST'])
+@login_required
+def status():
+    if request.method == 'POST':
+        stat = request.form.get('stat')
+        new_status = Status(stat=stat)
+        db.session.add(new_status)
+        db.session.commit()
+        return redirect(url_for('user'))
+    return render_template('user.html')
