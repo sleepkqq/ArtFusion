@@ -92,6 +92,16 @@ def delete_post(post_id):
     return redirect(url_for('news'))
 
 
+@app.route('/edit/<int:post_id>', methods=['POST'])
+def edit_post(post_id):
+    post = News.query.get(post_id)
+    if post and post.username == current_user.username:
+        new_text = request.form.get('edit_text')
+        post.text = new_text
+        db.session.commit()
+        return redirect(url_for("user_profile", id=current_user.id))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -102,7 +112,7 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            return render_template('login.html', error="Username or the password is incorrect!")
+            return render_template('login.html', error="Invalid username or password!")
     return render_template('login.html')
 
 
@@ -115,8 +125,11 @@ def register():
         new_user = User(username=username, email=email, active=True)
         new_user.set_password(password)
         user = User.query.filter_by(username=username).first()
+        mail = User.query.filter_by(email=email).first()
         if user:
-            return render_template('register.html', error="This username is already taken!")
+            return render_template('register.html', error="This name is already in use. Please choose another.")
+        if mail:
+            return render_template('register.html', error="This email is already in use. Please choose another.")
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
