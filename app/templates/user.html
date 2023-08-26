@@ -17,24 +17,21 @@
                             {% else %}
                                 No status available.
                             {% endif %}
+                            {% if user.username == current_user.username %}
+                                <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#editStatusModal{{ user.id }}">
+                                    <i class="bi bi-heart">✏</i>
+                                </button>
+                            {% endif %}
                         </p>
+                        <img src="{{ url_for('avatar', user_id=user.id) }}" alt="User Avatar" class="img-fluid rounded-circle" style="max-width: 150px; margin-bottom: 15px;">
                     </div>
+                    {% if user.username == current_user.username %}
+                        <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#updateAvatarModal{{ user.id }}">Edit avatar</button>
+                    {% endif %}
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><b>Email:</b> {{ user.email }}</li>
                     </ul>
                 </div>
-
-                {% if user.username == current_user.username %}
-                    <form method="post" action="/status/{{ user.id }}" class="my-4 p-4 border rounded">
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Update Your Status:</label>
-                            <input type="text" class="form-control" id="status" name="status" required>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Update Status</button>
-                        </div>
-                    </form>
-                {% endif %}
 
                 <div class="row mt-4">
                     {% for post in user.posts %}
@@ -64,8 +61,8 @@
                                         {% endif %}
                                         {% if current_user.username == post.username %}
                                         <div class="dropdown">
-                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ post.id }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v"></i>
+                                            <button class="btn btn-primary" type="button" id="dropdownMenuButton{{ post.id }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="bi bi-heart">···</i>
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ post.id }}">
                                                 <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal{{ post.id }}">Edit</button>
@@ -124,6 +121,52 @@
                         </div>
                     </div>
                 {% endfor %}
+
+                <div class="modal fade" id="updateAvatarModal{{ user.id }}" tabindex="-1" aria-labelledby="updateAvatarModalLabel{{ user.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateAvatarModalLabel{{ user.id }}">Update</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="post" action="{{ url_for('avatar', user_id=user.id) }}" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="image" class="form-label">Choose an image to update your avatar:</label>
+                                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="editStatusModal{{ user.id }}" tabindex="-1" aria-labelledby="editStatusModalLabel{{ user.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalLabel{{ user.id }}">Edit status</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="post" action="/status/{{ user.id }}">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="status" class="form-label">New status:</label>
+                                        <textarea class="form-control" id="status" name="status">{{ user.status }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

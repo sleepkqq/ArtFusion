@@ -12,6 +12,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     status = db.Column(db.String(300), nullable=True)
+    avatar = db.Column(db.LargeBinary, nullable=True)
     authenticated = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=True)
 
