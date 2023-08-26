@@ -8,7 +8,7 @@ bcrypt = Bcrypt()
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    username = db.Column(db.String(25), unique=True, nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     status = db.Column(db.String(300), nullable=True)
@@ -16,7 +16,8 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean, default=True)
 
     contacts = db.relationship('Contact', backref='user', lazy=True)
-    news = db.relationship('News', backref='user', lazy=True)
+    posts = db.relationship('Post', backref='user', lazy=True)
+    likes = db.relationship('Like', backref='user', lazy=True)
 
     def __init__(self, username, email, active):
         self.username = username
@@ -38,11 +39,13 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-class News(db.Model):
+class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), db.ForeignKey('user.username'), nullable=False)
     text = db.Column(db.String(300), nullable=False)
     image = db.Column(db.LargeBinary, nullable=False)
+
+    likes = db.relationship('Like', backref='post', lazy=True)
 
     def __init__(self, username, text, image):
         self.username = username
@@ -50,9 +53,15 @@ class News(db.Model):
         self.image = image
 
 
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+
+
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), db.ForeignKey('user.username'), nullable=False)
+    username = db.Column(db.String(25), db.ForeignKey('user.username'), nullable=False)
     email = db.Column(db.String(128), nullable=False)
     message = db.Column(db.String(256), nullable=False)
 
