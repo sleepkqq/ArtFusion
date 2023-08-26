@@ -61,20 +61,6 @@ def resize_and_save_image(image_data, max_width=500, max_height=200):
     return output.read()
 
 
-@app.route('/avatar', methods=['GET', 'POST'])
-@login_required
-def avatar():
-    if request.method == 'POST':
-        image = request.files['image'].read() if 'image' in request.files else None
-        new_avatar = Avatar(current_user.username, image=image)
-        db.session.add(new_avatar)
-        db.session.commit()
-        return redirect(url_for('user'))
-
-    ava = Avatar(current_user.username, image=image)
-    return render_template("user.html", avatar=ava)
-
-
 @app.route('/image/<int:post_id>')
 @login_required
 def get_image(post_id):
