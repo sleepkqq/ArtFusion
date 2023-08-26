@@ -71,21 +71,23 @@ def get_image(post_id):
 
 @app.route('/delete/<int:post_id>', methods=['GET', 'POST'])
 def delete_post(post_id):
+    previous_url = request.referrer
     post = News.query.get(post_id)
     if post.username == current_user.username and post:
         db.session.delete(post)
         db.session.commit()
-    return redirect(url_for('news'))
+    return redirect(f"{previous_url}")
 
 
 @app.route('/edit/<int:post_id>', methods=['POST'])
 def edit_post(post_id):
     post = News.query.get(post_id)
+    previous_url = request.referrer
     if post and post.username == current_user.username:
         new_text = request.form.get('edit_text')
         post.text = new_text
         db.session.commit()
-        return redirect(url_for("user_profile", id=current_user.id))
+        return redirect(f"{previous_url}")
 
 
 @app.route('/login', methods=['GET', 'POST'])
