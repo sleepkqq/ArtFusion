@@ -71,3 +71,10 @@ class Contact(db.Model):
         self.email = email
         self.message = message
 
+
+class Status(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    stat = db.Column(db.String(256), nullable=False)
+
+    def __init__(self, stat):
+        self.stat = stat

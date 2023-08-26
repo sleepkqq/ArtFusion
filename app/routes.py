@@ -178,8 +178,23 @@ def logout():
 def contact():
     if request.method == 'POST':
         message = request.form.get('message')
+        con = Contact.query.filter_by(message=message).first()
         new_contact_us = Contact(username=current_user.username, email=current_user.email, message=message)
+        if not con:
+            return render_template('contact.html', error="Thank You!")
         db.session.add(new_contact_us)
         db.session.commit()
         return redirect(url_for('contact'))
     return render_template('contact.html')
+
+
+@app.route('/user', methods=['GET', 'POST'])
+@login_required
+def status():
+    if request.method == 'POST':
+        stat = request.form.get('stat')
+        new_status = Status(stat=stat)
+        db.session.add(new_status)
+        db.session.commit()
+        return redirect(url_for('user'))
+    return render_template('user.html')
