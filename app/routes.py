@@ -25,7 +25,6 @@ def user_profile(user_id):
     current_user_likes = [like.post_id for like in current_user.likes]
     return render_template('user.html',
                            user=user,
-                           current_user=current_user,
                            current_user_likes=current_user_likes)
 
 
@@ -43,17 +42,26 @@ def news():
     current_user_likes = [like.post_id for like in current_user.likes]
     return render_template('news.html',
                            posts=posts,
-                           current_user=current_user,
                            current_user_likes=current_user_likes)
 
 
-def resize_and_save_image(image_data, max_width=500, max_height=200):
-    img = Image.open(BytesIO(image_data))
-    img.thumbnail((max_width, max_height))
-    output = BytesIO()
-    img.save(output, format='JPEG')
-    output.seek(0)
-    return output.read()
+def resize_and_save_image(image_data, target_size_kb=64):
+    if not image_data:
+        return None
+
+    width, height = Image.open(BytesIO(image_data)).size
+
+    while len(image_data) > target_size_kb * 1024:
+        width = int(width * 0.9)
+        height = int(height * 0.9)
+
+        output = BytesIO()
+        image = Image.open(BytesIO(image_data))
+        image = image.resize((width, height), Image.Resampling.LANCZOS)
+        image.save(output, format='JPEG')
+        image_data = output.getvalue()
+
+    return image_data
 
 
 @app.route('/status/<int:user_id>', methods=['POST'])
@@ -117,6 +125,7 @@ def avatar(user_id):
 
 
 @app.route('/delete/<int:post_id>', methods=['GET', 'POST'])
+@login_required
 def delete_post(post_id):
     post = Post.query.get(post_id)
     if post.username == current_user.username and post:
@@ -128,6 +137,7 @@ def delete_post(post_id):
 
 
 @app.route('/edit/<int:post_id>', methods=['POST'])
+@login_required
 def edit_post(post_id):
     post = Post.query.get(post_id)
     if post and post.username == current_user.username:
@@ -139,6 +149,7 @@ def edit_post(post_id):
 
 
 @app.route('/search', methods=['GET'])
+@login_required
 def search():
     query = request.args.get('query')
     if query:
@@ -151,7 +162,6 @@ def search():
     return render_template('news.html',
                            posts=post_results,
                            query=query,
-                           current_user=current_user,
                            current_user_likes=current_user_likes,
                            users=user_results)
 
@@ -187,7 +197,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
     return render_template('register.html')
 
 
