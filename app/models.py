@@ -11,7 +11,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(25), unique=True, nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    status = db.Column(db.String(300), nullable=True)
+    status = db.Column(db.String(100), nullable=True)
     avatar = db.Column(db.LargeBinary, nullable=True)
     authenticated = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=True)
@@ -43,7 +43,7 @@ def load_user(user_id):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), db.ForeignKey('user.username'), nullable=False)
-    text = db.Column(db.String(300), nullable=False)
+    text = db.Column(db.String(100), nullable=False)
     image = db.Column(db.LargeBinary, nullable=False)
 
     likes = db.relationship('Like', backref='post', lazy=True)
