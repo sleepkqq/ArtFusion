@@ -23,7 +23,10 @@ def users():
 def user_profile(user_id):
     user = User.query.filter_by(id=user_id).first()
     current_user_likes = [like.post_id for like in current_user.likes]
-    return render_template('user.html', user=user, current_user=current_user, current_user_likes=current_user_likes)
+    return render_template('user.html',
+                           user=user,
+                           current_user=current_user,
+                           current_user_likes=current_user_likes)
 
 
 @app.route('/news', methods=['GET', 'POST'])
@@ -38,7 +41,10 @@ def news():
         db.session.commit()
     posts = Post.query.all()
     current_user_likes = [like.post_id for like in current_user.likes]
-    return render_template('news.html', posts=posts, current_user=current_user, current_user_likes=current_user_likes)
+    return render_template('news.html',
+                           posts=posts,
+                           current_user=current_user,
+                           current_user_likes=current_user_likes)
 
 
 def resize_and_save_image(image_data, max_width=500, max_height=200):
@@ -55,7 +61,7 @@ def resize_and_save_image(image_data, max_width=500, max_height=200):
 def set_user_status(user_id):
     status = request.form.get('status')
     user = User.query.get(user_id)
-    if current_user.username == user.username and user:
+    if current_user.id == user_id and user:
         user.set_status(status)
         db.session.commit()
         return redirect('/user/' + str(user_id))
@@ -95,7 +101,7 @@ def get_image(post_id):
 @login_required
 def avatar(user_id):
     user = User.query.get(user_id)
-    if request.method == 'POST':
+    if request.method == 'POST' and current_user.id == user_id:
         image = request.files['image'].read() if 'image' in request.files else None
         resized_image_data = resize_and_save_image(image)
         user.avatar = resized_image_data
@@ -132,6 +138,24 @@ def edit_post(post_id):
     return '404 Not found'
 
 
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query')
+    if query:
+        post_results = Post.query.filter(Post.text.contains(query)).all()
+        user_results = User.query.filter(User.username.contains(query)).all()
+    else:
+        post_results = []
+        user_results = []
+    current_user_likes = [like.post_id for like in current_user.likes]
+    return render_template('news.html',
+                           posts=post_results,
+                           query=query,
+                           current_user=current_user,
+                           current_user_likes=current_user_likes,
+                           users=user_results)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -157,7 +181,8 @@ def register():
         user = User.query.filter_by(username=username).first()
         mail = User.query.filter_by(email=email).first()
         if user or mail:
-            error_message = 'This name is already in use. Please choose another.' if user else 'This email is already in use. Please choose another.'
+            error_message = 'This name is already in use. Please choose another.'\
+                if user else 'This email is already in use. Please choose another.'
             return render_template('register.html', error=error_message)
         db.session.add(new_user)
         db.session.commit()
