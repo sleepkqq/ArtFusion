@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Create
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <form method="post" action="/create" enctype="multipart/form-data" class="custom-form">
+            <div class="mb-3">
+                <label for="text" class="form-label">Text</label>
+                <input type="text" class="form-control" placeholder="Write something..." id="text" name="text" required>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Choose an image to upload:</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
