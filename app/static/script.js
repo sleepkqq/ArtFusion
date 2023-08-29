@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const imageInput = document.getElementById('imageInput');
     const imagePreview = document.getElementById('imagePreview');
     const imageForm = document.getElementById('imageForm');
@@ -49,4 +49,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 'image/jpeg');
         }
     });
+});
+
+document.getElementById('logoutButton').addEventListener('click', function () {
+    window.location.href = "/logout";
 });

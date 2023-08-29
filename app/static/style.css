@@ -30,3 +30,24 @@
     margin-top: 10px;
     display: none;
 }
+
+body {
+    background-color: #f8f9fa;
+}
+
+.custom-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.custom-form label {
+    font-weight: bold;
+}
+
+.custom-form .btn-primary {
+    width: 100%;
+}

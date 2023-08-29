@@ -16,7 +16,7 @@
                                 <span class="badge bg-primary rounded-pill ml-2">{{ user.id }}</span>
                                 <span class="fw-bold">{{ user.username }}</span>
                             </div>
-                            <a href="/user/{{ user.id }}" class="btn btn-sm btn-outline-primary">View Profile</a>
+                            <a href="/{{ user.id }}" class="btn btn-sm btn-outline-primary">View Profile</a>
                         </li>
                     {% endfor %}
                 </ul>

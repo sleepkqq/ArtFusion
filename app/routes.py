@@ -6,19 +6,14 @@ from flask import render_template, request, redirect, url_for, send_file, send_f
 from PIL import Image
 
 
-@app.route('/', methods=['GET'])
-def index():
-    return render_template('index.html')
-
-
-@app.route('/user/all', methods=['GET'])
+@app.route('/users', methods=['GET'])
 @login_required
 def users():
     users_list = User.query.all()
     return render_template('users.html', users=users_list)
 
 
-@app.route('/user/<int:user_id>', methods=['GET'])
+@app.route('/<int:user_id>', methods=['GET'])
 @login_required
 def user_profile(user_id):
     user = User.query.filter_by(id=user_id).first()
@@ -28,9 +23,22 @@ def user_profile(user_id):
                            current_user_likes=current_user_likes)
 
 
-@app.route('/news', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 @login_required
-def news():
+def main_page():
+    posts = Post.query.all()
+    reversed_posts = list(reversed(posts))
+    current_user_likes = [like.post_id for like in current_user.likes]
+    success = request.args.get('success')
+    return render_template('index.html',
+                           posts=reversed_posts,
+                           current_user_likes=current_user_likes,
+                           success=success)
+
+
+@app.route('/create', methods=['GET', 'POST'])
+@login_required
+def create():
     if request.method == 'POST':
         text = request.form.get('text')
         image = request.files['image'].read() if 'image' in request.files else None
@@ -38,11 +46,8 @@ def news():
         post = Post(current_user.username, text=text, image=resized_image_data)
         db.session.add(post)
         db.session.commit()
-    posts = Post.query.all()
-    current_user_likes = [like.post_id for like in current_user.likes]
-    return render_template('news.html',
-                           posts=posts,
-                           current_user_likes=current_user_likes)
+        return redirect(url_for('main_page', success=True))
+    return render_template('create.html')
 
 
 def resize_and_save_image(image_data, target_size_kb=64):
@@ -72,7 +77,8 @@ def set_user_status(user_id):
     if current_user.id == user_id and user:
         user.set_status(status)
         db.session.commit()
-        return redirect('/user/' + str(user_id))
+        return redirect(request.referrer)
+    return '404 Not found'
 
 
 @app.route('/like/<int:post_id>', methods=['POST'])
@@ -159,7 +165,7 @@ def search():
         post_results = []
         user_results = []
     current_user_likes = [like.post_id for like in current_user.likes]
-    return render_template('news.html',
+    return render_template('index.html',
                            posts=post_results,
                            query=query,
                            current_user_likes=current_user_likes,
@@ -174,7 +180,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for('index'))
+            return redirect(url_for('main_page'))
         else:
             return render_template('login.html', error='Invalid username or password!')
     return render_template('login.html')
@@ -197,7 +203,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
-        return redirect(url_for('index'))
+        return redirect(url_for('main_page'))
     return render_template('register.html')
 
 
@@ -205,7 +211,7 @@ def register():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main_page'))
 
 
 @app.route('/contact', methods=['GET', 'POST'])
