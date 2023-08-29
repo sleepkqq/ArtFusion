@@ -2,7 +2,7 @@ from io import BytesIO
 from app import app, db
 from app.models import User, Post, Contact, Like
 from flask_login import login_user, login_required, logout_user, current_user
-from flask import render_template, request, redirect, url_for, send_file, send_from_directory
+from flask import render_template, request, redirect, url_for, send_file, send_from_directory, jsonify
 from PIL import Image
 
 
