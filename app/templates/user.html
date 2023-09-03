@@ -25,7 +25,7 @@
                             {% endif %}
                         </p>
                         <img src="{{ url_for('avatar', user_id=user.id) }}" alt="User Avatar"
-                             class="img-fluid rounded-circle" style="max-width: 150px; margin-bottom: 15px;">
+                             class="img-fluid rounded-circle" style="width: 150px; margin-bottom: 15px;">
                     </div>
                     {% if user.username == current_user.username %}
                         <button class="btn btn-light" data-bs-toggle="modal"
@@ -224,6 +224,4 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}
